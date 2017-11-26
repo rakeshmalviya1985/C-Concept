@@ -1,0 +1,31 @@
+#include<iostream>
+using namespace std;
+class BaseTest
+{
+    
+    public:
+    int i;
+    BaseTest(int j)
+    {
+     i = j;   
+    }
+};
+class Test : public BaseTest
+{
+	const int t;
+	int &i;
+	char *ptr;
+public:
+	//Test(int t , int k){t =t; i = k;} //Initializer list must be used
+	Test(int t1 ,int k):
+	t(t1) , i(k) , BaseTest(k) ,
+	ptr ( (char *) malloc(1000))
+	{} 
+	int getT() { return t; }
+};
+
+int main() {
+	Test t1(10,1);
+	cout<<t1.getT();
+	return 0;
+}t
