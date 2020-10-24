@@ -1,94 +1,101 @@
-/******************************************************************************
+/*******************************************************************
+*  find more detail on youtube @equalconnect Coach
+*  Following program will give you idea how to write/implement
+*  your own share_ptr in C++
+********************************************************************/
+#include <iostream> 
+using namespace std; 
 
-                              Online C++ Compiler.
-               Code, Compile, Run and Debug C++ program online.
-Write your code in this editor and press "Run" button to compile and execute it.
+class Counter { 
+public: 
 
-*******************************************************************************/
-
-#include <bits/stdc++.h>
-using namespace std;
-
-
-template <typename T>
-class share_ptr
-{
-    private:
-    
-    T* ptr;
-	atomic <int> refCount;
-    public:
-    
-    share_ptr()
-    {
-        cout<<"\n constructor default ";
-        ptr = nullptr;
-		refCount = 0;
-    }
-    
-    T getValue()
-    {
-        return *ptr;
-    }
+	Counter() : m_counter(0){}; 
+	Counter(const Counter&) = delete; 
+	Counter& operator=(const Counter&) = delete;
+	~Counter()	{ } 
+	void reset() { 	m_counter = 0; 	}
+	unsigned int get() 	{ 		return m_counter; 	} 
+	void operator++()	{ m_counter++; 	} 
+	void operator++(int) { 	m_counter++; } 
+    void operator--() { m_counter--; 	} 
+	void operator--(int) { 	m_counter--; 	} 
 	
-	int shareCount()
-	{
-	    return refCount;
-	}
-   explicit share_ptr(T* ptr1)
-    {
-        cout<<"\n  constructor pointer";
-        refCount= 0;
-		++refCount;
-        ptr = ptr1;
-    }
-    share_ptr& operator=(share_ptr &ptr3)
-    {
-        if(this == &ptr3)
-        return *this;
-        this->~share_ptr();
-		refCount = ptr3.shareCount();
-        ptr = ptr3.ptr;
-        ++refCount;
-        cout<<"\n Assignment operator111  : "<<refCount;
-        
-        return *this;
-    }
-    
-    T* operator->()
-    {
-        cout<<"\n  -> operator oveload";
-        return ptr;
-    }
-    
-    T& operator*()
-    {
-        cout<<"\n  * operator oveload";
-        return *ptr;
-    }
-    
-    
-    ~share_ptr()
-    {
-        cout<<"\n  destructor "<<refCount;
-        if(ptr)
-        {
-	          --refCount;
-             if(refCount <= 0)
-             {
-                delete ptr;
-                refCount = 0;
-                ptr = nullptr;
-             }
-        }
-    }
-    
-};
+	friend ostream& operator<<(ostream& os, const Counter& counter) 
+	{ 
+		os << "Counter Value : "
+		<< counter.m_counter << endl; 
+	} 
 
-int main()
-{
-    share_ptr<string> sp(new string());
-      cout<<"\n sp : "<<*sp<<" "<<sp.shareCount();
-    share_ptr<string> sp1;
-    return 0;
-}
+private: 
+	unsigned int m_counter{}; 
+}; 
+template <typename T> 
+
+class Shared_ptr { 
+public: 
+	explicit Shared_ptr(T* ptr = nullptr) 
+	{ 
+		m_ptr = ptr; 
+		m_counter = new Counter(); 
+		if (ptr) { 
+			(*m_counter)++; 
+		} 
+	} 
+
+	Shared_ptr(Shared_ptr<T>& sp) 
+	{ 
+		m_ptr = sp.m_ptr; 
+		m_counter = sp.m_counter; 
+		(*m_counter)++; 
+	} 
+
+      Shared_ptr<T>& operator=(Shared_ptr<T> &obj1)
+      {
+          
+          if(this == &obj1)
+          return *this;
+          m_ptr = obj1.m_ptr;
+          (*obj1.m_counter)++;
+          return *this;
+      }
+	unsigned int use_count() { 	return m_counter->get(); } 
+	T* get() {return m_ptr;} 
+	T& operator*() { return *m_ptr;	} 
+	T* operator->() { return m_ptr; } 
+	
+	~Shared_ptr() 
+	{ 
+		(*m_counter)--; 
+		if (m_counter->get() == 0) { 
+			delete m_counter; 
+			delete m_ptr; 
+		} 
+	} 
+
+	friend ostream& operator<<(ostream& os, Shared_ptr<T>& sp) 
+	{ 
+		os << "Address pointed : "
+		<< sp.get() << endl; 
+		cout << *(sp.m_counter) << endl; 
+	} 
+
+private: 
+	Counter* m_counter; 
+	T* m_ptr; 
+}; 
+
+int main() 
+{ 
+	Shared_ptr<int> ptr1(new int(151)); 
+	cout <<ptr1.use_count() ; 
+	*ptr1 = 100; 
+    {
+      Shared_ptr<int> sp1(ptr1);  
+       
+       Shared_ptr<int> sp2;
+       
+       sp2 = sp1;
+       cout<<" "<<*sp2<<" " <<ptr1.use_count();
+    }
+	return 0; 
+} 
