@@ -1,0 +1,98 @@
+#include <iostream>
+using namespace std;
+class myString
+{
+  private:
+  int length;
+  char *data;
+  public:
+  myString(){ length = 0;data = nullptr;}
+myString (const char* ptr) 
+{
+     if(ptr)
+     {
+         int i =0;
+         
+         while(ptr[i] != '\0')
+            i++;
+            
+         length = i+1;
+         
+         data = new char[length];
+         
+         for(int j = 0;j<length;j++)
+             data[j] = ptr[j];
+             
+             data[length] = '\0';
+     }
+     else
+     {
+         data = new char[0];
+         length = 0;
+     }
+}
+
+myString (const myString& ptr) 
+{
+    length = ptr.mylength();
+    cout<<"\n In copy const : "<<ptr.mylength();
+    data   = new char[length];
+    for (unsigned j=0; j <length; j++)
+        data[j] = ptr[j];
+}
+ 
+myString& operator=(myString&str1) 
+{
+    if(&str1 == this)
+    return *this;
+    
+    length = str1.mylength();
+    data   = new char[length];
+    for (unsigned j=0; j <length; j++)
+        data[j] = str1[j];   
+        
+    return *this;
+}
+  
+int mylength() const{ return length;}
+ 
+char operator[] (unsigned j) const 
+{
+    if (j >= length) throw 1;
+    return data[j];
+}
+
+char& operator[] (unsigned j) 
+{
+    if (j >= length) throw 1;
+    return data[j];
+}
+
+};
+using namespace std;
+
+int main()
+{
+    char str[]="rakesh";
+    
+    int len = sizeof(str)/sizeof(str[0]);
+    
+    myString myStr(str);
+    
+    cout<<"\n myStr len :  "<<myStr.mylength();
+    cout<<"\n my string : ";
+     for(int i = 0;i<myStr.mylength();i++)
+     cout<<" "<<myStr[i];
+     
+     myString myStr1(myStr);
+    cout<<"\n my string1 : ";
+     for(int i = 0;i<myStr1.mylength();i++)     
+     cout<<" "<<myStr1[i];
+     
+     myString myStr2;
+     myStr2 = myStr1;
+     cout<<"\n my string1 : ";
+     for(int i = 0;i<myStr2.mylength();i++)     
+     cout<<" "<<myStr2[i];
+   return 0;
+}
