@@ -1,0 +1,40 @@
+/*******************************************************************
+*  find more detail on youtube @equalconnect Coach
+*  convert variable Addres into string
+********************************************************************/
+
+#include <iostream>
+#include <vector>
+#include <sstream>
+#include <string>
+using namespace std; 
+
+
+
+int main() 
+{ 
+
+   int i = 10;
+   
+   int *ptr = &i;
+   //vector<int>vec;
+   string str;
+   std::ostringstream ss;
+   ss<<ptr;
+   str = ss.str();
+   
+   vector<string>vec;
+   vec.push_back(str);
+   cout<<" i address : "<<&i;
+   cout<<"\n ptr address : "<<ptr;
+   cout<<" \nstr address : "<<str;
+   cout<<" \nvec address : "<<vec[0];
+   
+   if(vec[0] == str)
+   {
+       cout<<"\nString match";
+   }
+   cout<<"\n ptr address : "<<&ptr;
+	return 0; 
+} 
+
